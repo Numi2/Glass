@@ -1,79 +1,86 @@
-# Developer Tasks for Enhancing the Landmarks App
+# Developer Tasks: Product Backlog
 
-To transform the static "Landmarks" app into a dynamic, community-driven platform with user-generated content, the following developer tasks are proposed:
+Below is a curated list of high-impact tasks for the next milestones.  Tasks are grouped and roughly ordered by priority.  Each task includes the impacted layers and suggested starting points.
 
-## 1. User Authentication and Profiles
+---
 
-*   **Task**: Implement user registration and login functionality.
-    *   **Details**: Integrate with a secure authentication service (e.g., Firebase Authentication, Auth0, or a custom backend authentication system).
-    *   **Sub-tasks**:
-        *   Design and implement user interface for sign-up and login.
-        *   Handle user sessions and secure token storage.
-        *   Implement password reset functionality.
-*   **Task**: Create user profiles.
-    *   **Details**: Allow users to manage their public profile, including a username, profile picture, and a brief bio.
-    *   **Sub-tasks**:
-        *   Design and implement profile editing UI.
-        *   Store user profile data persistently.
+## 1. User-Added Landmark Images (IN PROGRESS)
+*Owner: TBD*  
+Extends existing components so users can upload, view, and manage their own photos.
 
-## 2. Persistent Data Storage for User-Generated Content
+### 1.1 Image Selection & Upload
+- Add `PhotosPicker` sheet to `LandmarkDetailView`.
+- Resize & compress on the client (`ImageRenderer`).
+- Display upload progress with `ProgressView` overlay.
 
-*   **Task**: Migrate from in-memory data to a persistent backend.
-    *   **Details**: Replace the current `Landmark.exampleData` and `LandmarkCollection.exampleData` with a robust database solution.
-    *   **Considerations**: Evaluate and integrate with either SwiftData (for local and iCloud sync) or CloudKit (for cloud-based data storage and sharing across users).
-    *   **Sub-tasks**:
-        *   Define data models for `User`, `UserLandmark`, and `UserCollection` in the chosen persistence framework.
-        *   Implement data migration strategies if necessary.
-        *   Develop data access layer for CRUD (Create, Read, Update, Delete) operations.
+### 1.2 Persistent Storage
+- Extend `Landmark` with `[UserImage]` sub-model (id, url, createdAt, ownerId).
+- Implement `CloudKitAssetsDataService` or `FirebaseStorageDataService` conforming to `DataService`.
+- Sync images when `ModelData.fetchLandmarks()` is called.
 
-## 3. User-Generated Landmarks
+### 1.3 Gallery Presentation
+- Create `LandmarkGalleryView` – horizontally-scrolling `TabView(.page)` or masonry grid.
+- Use `AsyncImage` with caching (e.g. Nuke).
+- Blur sensitive images until fully downloaded.
 
-*   **Task**: Enable users to create new landmarks.
-    *   **Details**: Provide a form or interface for users to input landmark details (name, description, location coordinates, images).
-    *   **Sub-tasks**:
-        *   Design and implement a "Create New Landmark" UI.
-        *   Integrate image upload functionality (to cloud storage like Firebase Storage or CloudKit Assets).
-        *   Implement location picking on a map.
-        *   Validate user input.
-*   **Task**: Allow users to edit their own landmarks.
-    *   **Details**: Enable owners to modify the details of the landmarks they have created.
-*   **Task**: Implement functionality for users to delete their own landmarks.
+### 1.4 Image Management
+- Long-press context menu (`Edit`, `Delete`, `Set as Featured`).
+- Add owner-only guards and confirmation dialogs.
 
-## 4. User-Generated Collections
+### 1.5 Cross-Platform
+- macOS support via `OpenPanel` + drag-and-drop.
 
-*   **Task**: Enable users to create custom landmark collections.
-    *   **Details**: Users should be able to name their collections, add descriptions, and select landmarks (both their own and public ones) to include.
-    *   **Sub-tasks**:
-        *   Design and implement a "Create New Collection" UI.
-        *   Implement a landmark selection interface for adding to collections.
-*   **Task**: Allow users to edit their own collections.
-*   **Task**: Implement functionality for users to delete their own collections.
+---
 
-## 5. Social Features
+## 2. Replace `MockDataService` with Production Backend
+*Owner: Backend Team*
 
-*   **Task**: Implement a "Follow" feature for users.
-    *   **Details**: Allow users to follow other users to see their public landmarks and collections.
-*   **Task**: Enable content sharing.
-    *   **Details**: Allow users to share links to their public landmarks and collections via system share sheets.
-*   **Task**: Implement a discovery feed or section.
-    *   **Details**: Showcase popular or recently added user-generated landmarks and collections.
-    *   **Sub-tasks**:
-        *   Develop algorithms for content ranking (e.g., by popularity, recency).
-        *   Design and implement the discovery UI.
-*   **Task**: Add commenting and liking functionality for landmarks and collections.
+| Milestone | Description |
+|-----------|-------------|
+| 2.1 | Define `DataService` protocol methods (CRUD landmarks, collections, images). |
+| 2.2 | Implement `FirebaseDataService` (Firestore + Storage) **or** `CloudKitDataService`. |
+| 2.3 | Add offline persistence with `SQLite` or Core Data `NSPersistentCloudKitContainer`. |
+| 2.4 | Unit test with `XCTest + CombineExpectations`. |
 
-## 6. Backend & API Development (if not using BaaS like Firebase/CloudKit extensively)
+Start File: `Model/ModelData.swift`
 
-*   **Task**: Develop a scalable backend API.
-    *   **Details**: This would be necessary to handle user authentication, content storage, and social interactions if a comprehensive BaaS solution isn't fully adopted.
-    *   **Sub-tasks**:
-        *   Design RESTful APIs for all user-generated content and social features.
-        *   Set up a cloud database (e.g., PostgreSQL, MongoDB).
-        *   Implement server-side logic for data validation, security, and business rules.
+---
 
-## 7. Enhanced UI/UX for User-Generated Content
+## 3. Global Search Refinement
+*Owner: UX Team*
 
-*   **Task**: Improve the user experience for content creation forms.
-    *   **Details**: Implement more interactive controls, potentially including sliders or custom pickers for certain data points (e.g., elevation, area).
-*   **Task**: Design clear indicators for user-generated vs. app-provided content.
-*   **Task**: Implement search and filtering for user-generated content. 
+- Index on-device with `SearchIndex` for fuzzy search.
+- Include Collections & Badges in results.
+- Debounce search string (`.onChange`) to avoid UI thrash.
+
+---
+
+## 4. Accessibility & Localization Polish
+- Add VoiceOver labels for badge icons.
+- Audit Dynamic Type in `LandmarkDetailView`.
+- Translate missing `.xcstrings` keys (German, Japanese).
+
+---
+
+## 5. Continuous Integration / Delivery
+- Set up GitHub Actions: `xcodebuild -scheme Landmarks -destination "platform=iOS Simulator,name=iPhone 15" test`.
+- Upload coverage to Codecov.
+- On `main`, notarize & archive macOS build.
+
+---
+
+## 6. Tech Debt & Refactors
+- Extract glass-specific view modifiers to `Glass+Extensions.swift`.
+- Move style constants into SwiftGen-generated enum.
+- Convert `@State` heavy views to *observable* view models.
+
+---
+
+## 7. Nice-to-Have Enhancements
+- Live Activity widgets for nearby landmarks.
+- SharePlay group sessions when exploring a landmark.
+- Vision Pro spatial version – concept spike.
+
+---
+
+> _Update this file as tasks are completed or as new ideas surface._ 
