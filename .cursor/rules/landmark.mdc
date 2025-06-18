@@ -1,0 +1,89 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Landmarks is a SwifUI app that demonstrates how to use the new dynamic and expressive design feature, Liquid Glass. The Landmarks app lets people explore interesting sites around the world. The app provides a way for people to organize and mark their adventures and receive custom activity badges along the way. Landmarks runs on iPad, iPhone, and Mac.
+Landmarks uses a NavigationSplitView to organize and navigate to content in the app, and demonstrates several key concepts to optimize the use of Liquid Glass, Apples 2025 design feature.
+In LandmarkDetailView, the sample adds toolbar items for:
+
+sharing a landmark
+
+adding or removing a landmark from a list of Favorites
+
+adding or removing a landmark from Collections
+
+showing or hiding the inspector
+
+Overview
+Use a container with the glassEffect(_:in:isEnabled:) modifier. Each view with a Liquid Glass effect contributes a shape rendered with the effect to a set of shapes. SwiftUI renders the effects together, improving rendering performance and allowing the effects to interact with and morph into one another.
+Configure how shapes interact with one another by customizing the default spacing value of the container. As shapes near one another, their paths start to blend into one another. The higher the spacing, the sooner blending begins as the shapes approach each other.
+
+Topics
+Initializers
+init(spacing: CGFloat?, content: () -> Content)
+Creates a glass effect container with the provided spacing, extracting glass shapes from the provided content.
+Relationships
+Conforms To
+Sendable
+SendableMetatype
+View
+
+Styling views with Liquid Glass
+Applying Liquid Glass to custom views
+Configure, combine, and morph views using Liquid Glass effects.
+Landmarks: Building an app with Liquid Glass
+Enhance your app experience with system-provided and custom Liquid Glass.
+func glassEffect(Glass, in: some Shape, isEnabled: Bool) -> some View
+Applies the Liquid Glass effect to a view.
+
+func interactive(Bool) -> Glass
+Returns a copy of the structure configured to be interactive.
+
+struct GlassEffectTransition
+A structure that describes changes to apply when a glass effect is added or removed from the view hierarchy.
+
+struct GlassButtonStyle
+A button style that applies glass border artwork based on the button’s context.
+
+iOS 26 and macOS Tahoe introduce Liquid Glass, a new adaptive material for controls and navigational elements inspired by glass and liquid. This material changes color as someone scrolls and makes controls like toggles and sliders more interactive and visually appealing. The updates apply across all Apple platforms and include changes to structural components like TabView and NavigationSplitView, toolbars, search experiences, and the introduction of new APIs for developers to customize their apps' UI. The Landmarks app demonstrates these new features.
+
+App structure
+App structure is updated with refined APIs, including NavigationSplitView, TabView, and Sheets, all featuring the new Liquid Glass design. NavigationSplitView now has a floating Liquid Glass sidebar with a 'backgroundExtensionEffect' modifier that allows views to extend outside the safe area without clipping. TabViews on iPhone have a floating tab bar that can minimize on scroll, enhancing content visibility, and can include a bottom accessory view for additional controls. Sheets now have a Liquid Glass background that transitions smoothly between partial and full heights. They can also morph out of presenting buttons, creating a seamless user experience. Other presentations like menus, alerts, and popovers also flow smoothly from Liquid Glass controls. Dialogs now automatically morph out of their presenting buttons.
+
+Toolbars
+The new app design features floating toolbars on Liquid Glass surfaces with automatic item grouping. You can use the ToolbarSpacer API to create custom grouping and spacing, enhancing visual clarity. Add badges with a single line of code to indicate notifications. Monochrome icons reduce noise and an automatic scroll edge effect blurs content under toolbars for legibility. You can remove extra backgrounds and adjust for denser UIs.
+
+Search
+The new design introduces two main search patterns across platforms: Toolbar Search. The search field is at the bottom of the screen on iPhone, top-trailing on iPad/Mac, or minimized to a button which expands when tapped. Dedicated Search Page. Search is accessed via a tab, replacing the tab bar with a search field and app content. The search field appears centered above suggestions on iPad and Mac.
+
+Controls
+The new design introduces a consistent family resemblance across platforms for various controls. Buttons now have a capsule shape by default, with taller heights on macOS for better readability and larger click targets. Extra-large buttons and new glass styles are also available. Sliders now support tick marks, manual tick placement, and starting track fills from specific values. Menus have a fresh design with consistent icon placement across platforms. The new design also includes corner concentricity, ensuring controls align perfectly within their containers.
+Refine the Liquid Glass in the toolbar
+In LandmarkDetailView, the sample adds toolbar items for:
+
+sharing a landmark
+
+adding or removing a landmark from a list of Favorites
+
+adding or removing a landmark from Collections
+
+showing or hiding the inspector
+
+The system applies Liquid Glass to toolbar items automatically:
+Liquid Glass effects
+To customize an app further, you can build custom Liquid Glass elements. For example, the Landmarks app uses badges with the Liquid Glass effect. To achieve this, apply the 'glassEffect' modifier to custom views, which you can shape and tint for emphasis. The 'interactive' modifier is now available for iOS controls to enable scaling, bouncing, and shimmering upon interaction. Group multiple glass elements within a 'GlassEffectContainer' to ensure consistent visual results because glass cannot sample other glass. Create transitions between glass elements by using the 'glassEffectID' modifier, which allows for fluid morphing effects. This technique enhances an app's visual appeal and uniqueness, making it stand out.
+
+Reduce your use of custom backgrounds in controls and navigation elements. Any custom backgrounds and appearances you use in these elements might overlay or interfere with Liquid Glass or other effects that the system provides, such as the scroll edge effect. Make sure to check any custom backgrounds in elements like split views, tab bars, and toolbars. Prefer to remove custom effects and let the system determine the background appearance, especially for the following elements:
+
+SwiftUI
+
+NavigationStack
+
+NavigationSplitView
+
+titleBar
+
+toolbar(content:)
+
+Share your app’s data structures. Adopt SwiftData or Core Data, which work with CloudKit to store your app’s data. You can also adopt CloudKit directly, or use CloudKit JS to add CloudKit support to your web app. Get up to 1PB of storage for your app’s public data, and create containers for people to share content with each other. Run integration tests of your CloudKit code from Xcode or your continuous integration system. Access performance metrics, telemetry data, logs, and more using tools like CloudKit Console.
