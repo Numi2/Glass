@@ -9,6 +9,24 @@ import CoreTransferable
 import SwiftUI // Image
 import MapKit
 
+/// Categories for landmarks
+enum LandmarkCategory: String, CaseIterable, Codable {
+    case desert = "Desert"
+    case grassland = "Grassland"
+    case mountain = "Mountain"
+    case forest = "Forest"
+    case river = "River"
+    case lake = "Lake"
+    case ocean = "Ocean"
+    case reef = "Reef"
+    case canyon = "Canyon"
+    case cliffs = "Cliffs"
+    case saltFlat = "Salt Flat"
+    case nationalPark = "National Park"
+    case island = "Island"
+    case volcano = "Volcano"
+}
+
 /// A structure that defines the properties of a landmark.
 struct Landmark: Hashable, Identifiable, Transferable {
     var id: Int
@@ -24,6 +42,8 @@ struct Landmark: Hashable, Identifiable, Transferable {
     var location: LocalizedStringResource?
     var badge: Badge?
     var badgeProgress: BadgeProgress?
+    var isFeatured: Bool = false
+    var category: LandmarkCategory = .mountain
     
     var backgroundImageName: String {
         return "\(id)"

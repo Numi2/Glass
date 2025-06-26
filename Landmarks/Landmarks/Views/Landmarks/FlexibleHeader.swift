@@ -39,6 +39,15 @@ private struct FlexibleHeaderScrollViewModifier: ViewModifier {
     }
 }
 
+/// A view modifier that allows content to extend beyond safe areas for background effects
+private struct BackgroundExtensionEffectModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .ignoresSafeArea(.container, edges: .all)
+            .clipped()
+    }
+}
+
 // MARK: - View Extensions
 
 extension ScrollView {
@@ -52,5 +61,10 @@ extension View {
     /// A function that returns a view after it applies `FlexibleHeaderContentModifier` to it.
     func flexibleHeaderContent() -> some View {
         modifier(FlexibleHeaderContentModifier())
+    }
+    
+    /// A function that returns a view after it applies `BackgroundExtensionEffectModifier` to it.
+    func backgroundExtensionEffect() -> some View {
+        modifier(BackgroundExtensionEffectModifier())
     }
 }
